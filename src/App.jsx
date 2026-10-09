@@ -108,7 +108,7 @@ const Navbar = () => {
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-accent-DEFAULT hover:bg-accent-hover text-white px-6 py-2.5 rounded-full font-semibold transition-all hover:scale-105 hover:shadow-lg flex items-center gap-2"
+            className={`px-6 py-2.5 rounded-full font-semibold transition-all hover:scale-105 hover:shadow-lg flex items-center gap-2 ${isScrolled ? 'bg-brand-900 hover:bg-brand-800 text-white' : 'bg-accent-DEFAULT hover:bg-accent-hover text-white'}`}
           >
             <MessageCircle size={18} />
             Agendar Horário
