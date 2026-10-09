@@ -172,7 +172,7 @@ const Hero = () => {
       <div className="absolute inset-0 z-0">
         <img 
           src={bgImage} 
-          alt="Ambiente do salão" 
+          alt={`Interior do estabelecimento ${data.nome} em Butantã`}
           className="w-full h-full object-cover"
           referrerPolicy="no-referrer"
           onError={(e) => { e.target.style.display = 'none'; }}
@@ -185,13 +185,14 @@ const Hero = () => {
           {data.imagens_identidade_visual[0] && (
             <img 
               src={data.imagens_identidade_visual[0]} 
-              alt="Logo D'Luxo Hair" 
+              alt={`Logotipo do salão de beleza ${data.nome}`}
               className="w-40 h-40 md:w-56 md:h-56 mx-auto mb-8 rounded-full shadow-2xl border-4 border-white/20 object-cover" 
               referrerPolicy="no-referrer"
             />
           )}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white mb-6 text-balance tracking-tight drop-shadow-lg">
-            {data.nome}
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-white mb-6 text-balance tracking-tight drop-shadow-lg flex flex-col items-center">
+            <span className="text-xl sm:text-2xl lg:text-3xl font-semibold text-accent-DEFAULT mb-2 drop-shadow-md">Salão de Beleza Especialista em Butantã, SP</span>
+            <span>{data.nome}</span>
           </h1>
         </FadeIn>
         
@@ -325,7 +326,7 @@ const Gallery = () => {
               >
                 <img 
                   src={url} 
-                  alt={`Foto do espaço ${i + 1}`}
+                  alt={`Interior do salão de beleza ${data.nome} em Butantã - Detalhe ${i + 1}`}
                   loading="lazy"
                   decoding="async"
                   referrerPolicy="no-referrer"
@@ -638,6 +639,47 @@ const WhatsAppFloat = () => (
 );
 
 function App() {
+  useEffect(() => {
+    document.title = `Salão de Beleza Especialista no Butantã, SP | ${data.nome}`;
+    
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.name = "description";
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.content = `${data.nome}: Salão de beleza especialista em Mega Hair na fita, mechas, cor e corte na ${data.endereco.split('-')[1]?.trim() || "Vila Butantã, São Paulo - SP"}. Saúde capilar e sofisticação. Agende agora!`;
+
+    let script = document.querySelector('script[type="application/ld+json"]');
+    if (!script) {
+      script = document.createElement('script');
+      script.type = "application/ld+json";
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BeautySalon",
+      "name": data.nome,
+      "image": window.location.origin + data.fotos_local_maps[0],
+      "@id": window.location.origin,
+      "url": window.location.origin,
+      "telephone": data.telefone,
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": data.endereco.split('-')[0]?.trim(),
+        "addressLocality": data.endereco.split('-')[1]?.split(',')[0]?.trim() || "São Paulo",
+        "addressRegion": "SP",
+        "postalCode": data.endereco.match(/\d{5}-\d{3}/)?.[0] || "",
+        "addressCountry": "BR"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": data.nota_geral.toString(),
+        "reviewCount": data.avaliacoes_destaque.length.toString()
+      }
+    });
+  }, []);
+
   return (
     <div className="relative overflow-hidden bg-brand-50 min-h-screen">
       <Navbar />
